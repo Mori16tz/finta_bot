@@ -41,8 +41,8 @@ def create_table() -> None:
         engine, Base.metadata.tables.values(), checkfirst=True)
 
 
-def get_quote(fach: Vorlesung) -> list[Datenbank]:
-    return session.query(Datenbank).filter(Datenbank.Vorlesung == fach).all()
+def get_fach(fach: Vorlesung) -> list[Datenbank]:
+    return session.query(Datenbank).filter(Datenbank.fach == fach).all()
 
 
 def add_entry(fach: Vorlesung, ges: str, finta: str, num: str, date_=datetime.date.today()) -> None:
@@ -60,3 +60,6 @@ def delete_entry(fach: Vorlesung, date: datetime.date) -> None:
 
 def get_entry(fach: Vorlesung, date: datetime.date) -> Datenbank:
     return session.query(Datenbank).filter(Datenbank.fach == fach, Datenbank.date == date).first()
+
+
+

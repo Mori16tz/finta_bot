@@ -6,6 +6,8 @@ from discord import app_commands
 from database import Vorlesung, add_entry, delete_entry, get_entry
 import datetime
 
+from utils import generate_picture
+
 bot = commands.Bot(command_prefix="",
                    intents=discord.Intents.all(), help_command=None)
 
@@ -33,7 +35,7 @@ async def nachtrag(interaction: discord.Interaction, date: str, optionen: Vorles
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
         return
     add_entry(optionen, gesamt, finta, num, date_)
-    await interaction.response.send_message(f"Der Eintrag\nFach:{optionen}\nDatum: {date}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
+    await interaction.response.send_message(f"Der Eintrag\nFach: {optionen}\nDatum: {date}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
 
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
@@ -46,6 +48,12 @@ async def löschen(interaction: discord.Interaction, date: str, optionen: Vorles
     delete_entry(optionen, date_)
     await interaction.response.send_message(f"Der Eintrag für {optionen} vom {date} wurde gelöscht")
 
+
+@bot.tree.command(name="anzeigen", description="Zeigt die Tabelle für ein bestimmtes Fach an")
+@app_commands.describe(fach="Fach")
+async def anzeigen(interaction: discord.Interaction, fach: Vorlesung):
+    generate_picture(fach)
+    await interaction.response.send_message(file=discord.File("table.png"))
 
 def convert(date: str) -> datetime.date:
     full = date.split(".")
