@@ -62,7 +62,7 @@ def convert(date: str) -> datetime.date:
 
 
 @bot.event
-async def on_message():
+async def on_message(message: discord.Message):
     pass
 load_dotenv()
 TOKEN = os.getenv("TOKEN", "no Token set")
