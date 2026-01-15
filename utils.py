@@ -11,7 +11,7 @@ def generate_picture(vorlesung):
     for entry in get_fach(vorlesung):
         rows.append({
             "Vorlesung": entry.nummer,
-            "Datum": entry.date.strftime("%d.%m.%Y"),
+            "Datum": entry.date,
             "Gesamt": entry.gesamt,
             "FINTA": entry.finta,
             "Prozentual": f"{entry.quote} %"
@@ -19,7 +19,8 @@ def generate_picture(vorlesung):
 
     df = pd.DataFrame(rows)
     df.sort_values(["Datum", "Vorlesung"], inplace=True)
-
+    df["Datum"] = pd.to_datetime(df["Datum"])
+    df["Datum"]=df["Datum"].dt.strftime("%d.%m.%Y")
     fig, ax = plt.subplots(figsize=(8, len(df)*0.5 + 1))
     fig.patch.set_facecolor(BG_COLOR)
     ax.axis('off')

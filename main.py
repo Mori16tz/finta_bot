@@ -55,11 +55,15 @@ async def anzeigen(interaction: discord.Interaction, fach: Vorlesung):
     generate_picture(fach)
     await interaction.response.send_message(file=discord.File("table.png"))
 
+
 def convert(date: str) -> datetime.date:
     full = date.split(".")
     return datetime.date(int(full[2])+2000, int(full[1]), int(full[0]))
 
 
+@bot.event
+async def on_message():
+    pass
 load_dotenv()
 TOKEN = os.getenv("TOKEN", "no Token set")
 
