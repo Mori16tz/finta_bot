@@ -9,12 +9,12 @@ Base = declarative_base()
 
 
 class Vorlesung(StrEnum):
-    KDI = "KDI"
-    RSN = "RSN"
-    DML = "DML"
-    PK1 = "PK1"
-    KDP = "KDP"
-    SuG = "SuG"
+    KDI = "Konzepte der Informatik"
+    RSN = "Rechnersysteme und -Netze"
+    DML = "Diskrete Mathematik und Logik"
+    PK1 = "Programmierkurs 1"
+    KDP = "Konzepte der Programmierung"
+    SuG = "Sport und Gesellschaft"
     Anatomie = "Anatomie"
 
 
