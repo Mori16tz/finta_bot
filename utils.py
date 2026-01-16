@@ -6,6 +6,7 @@ BG_COLOR = "#070709"
 GRID_COLOR = "#4F545C"
 TEXT_COLOR = "#FFFFFF"
 
+
 def generate_picture(vorlesung):
     rows = []
     for entry in get_fach(vorlesung):
@@ -20,7 +21,7 @@ def generate_picture(vorlesung):
     df = pd.DataFrame(rows)
     df.sort_values(["Datum", "Vorlesung"], inplace=True)
     df["Datum"] = pd.to_datetime(df["Datum"])
-    df["Datum"]=df["Datum"].dt.strftime("%d.%m.%Y")
+    df["Datum"] = df["Datum"].dt.strftime("%d.%m.%Y")
     fig, ax = plt.subplots(figsize=(8, len(df)*0.5 + 1))
     fig.patch.set_facecolor(BG_COLOR)
     ax.axis('off')
@@ -52,6 +53,7 @@ def generate_picture(vorlesung):
     plt.tight_layout()
     plt.savefig("table.png", dpi=200, facecolor=fig.get_facecolor())
     plt.show()
-    
+
+
 if __name__ == "__main__":
     generate_picture(Vorlesung.RSN)

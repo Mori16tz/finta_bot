@@ -60,6 +60,3 @@ def delete_entry(fach: Vorlesung, date: datetime.date) -> None:
 
 def get_entry(fach: Vorlesung, date: datetime.date) -> Datenbank:
     return session.query(Datenbank).filter(Datenbank.fach == fach, Datenbank.date == date).first()
-
-
-

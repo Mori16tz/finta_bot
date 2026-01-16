@@ -5,3 +5,5 @@ venv/
 logs/
 *.png
 *.db
+.ipynb_checkpoints/
+table.png
