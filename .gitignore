@@ -1,9 +1,8 @@
-.env
 __pycache__/
-venv/
-*.sh
-logs/
-*.png
-*.db
 .ipynb_checkpoints/
+venv/
+logs/
+.env
+data.db
 table.png
+*.sh
