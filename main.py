@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
-from database import Vorlesung, add_entry, delete_entry, get_entry
+from database import Lecture, add_entry, delete_entry, get_entry, get_lecture
 import datetime
 
 from utils import generate_picture
@@ -19,7 +19,7 @@ async def on_ready() -> None:
 
 @bot.tree.command(name="eintrag", description="Einen neuen Eintrag hinzufügen")
 @app_commands.describe(optionen="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", num="1. oder 2. Vorlesung der Woche")
-async def eintrag(interaction: discord.Interaction, optionen: Vorlesung, gesamt: str, finta: str, num: str):
+async def eintrag(interaction: discord.Interaction, optionen: Lecture, gesamt: str, finta: str, num: str):
     if get_entry(optionen, datetime.date.today()) is not None:
         await interaction.response.send_message("Der Eintrag für heute existiert bereits")
         return
@@ -29,7 +29,7 @@ async def eintrag(interaction: discord.Interaction, optionen: Vorlesung, gesamt:
 
 @bot.tree.command(name="nachtrag", description="Einen Eintrag nachtragen")
 @app_commands.describe(optionen="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", date="Datum", num="1. oder 2. Vorlesung der Woche")
-async def nachtrag(interaction: discord.Interaction, date: str, optionen: Vorlesung, gesamt: str, finta: str, num: str):
+async def nachtrag(interaction: discord.Interaction, date: str, optionen: Lecture, gesamt: str, finta: str, num: str):
     date_ = convert(date)
     if get_entry(optionen, date_) is not None:
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
@@ -40,7 +40,7 @@ async def nachtrag(interaction: discord.Interaction, date: str, optionen: Vorles
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
 @app_commands.describe(optionen="Fach", date="Datum")
-async def löschen(interaction: discord.Interaction, date: str, optionen: Vorlesung):
+async def löschen(interaction: discord.Interaction, date: str, optionen: Lecture):
     date_ = convert(date)
     if get_entry(optionen, date_) is None:
         await interaction.response.send_message("Dieser Eintrag existiert nicht")
@@ -51,10 +51,19 @@ async def löschen(interaction: discord.Interaction, date: str, optionen: Vorles
 
 @bot.tree.command(name="anzeigen", description="Zeigt die Tabelle für ein bestimmtes Fach an")
 @app_commands.describe(fach="Fach")
-async def anzeigen(interaction: discord.Interaction, fach: Vorlesung):
+async def anzeigen(interaction: discord.Interaction, fach: Lecture):
     generate_picture(fach)
     await interaction.response.send_message(file=discord.File("table.png"))
 
+@bot.tree.command(name="durchschnitt", description="Zeigt den Durchschnitt für ein bestimmtes Fach an")
+@app_commands.describe(fach="Fach")
+async def durchschnitt(interaction: discord.Interaction, fach: Lecture):
+    rows, avg = get_lecture(fach),0
+    for entry in rows:
+        avg = avg + entry.quota
+    avg = round(avg/len(rows),2)
+    await interaction.response.send_message(f"Der Durchschnitt für {fach.value} ist {avg} %.")
+    
 
 def convert(date: str) -> datetime.date:
     full = date.split(".")

@@ -1,4 +1,4 @@
-from database import get_fach, Vorlesung
+from database import get_lecture, Lecture
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -9,13 +9,13 @@ TEXT_COLOR = "#FFFFFF"
 
 def generate_picture(vorlesung):
     rows = []
-    for entry in get_fach(vorlesung):
+    for entry in get_lecture(vorlesung):
         rows.append({
-            "Vorlesung": entry.nummer,
+            "Vorlesung": entry.number,
             "Datum": entry.date,
-            "Gesamt": entry.gesamt,
+            "Gesamt": entry.total,
             "FINTA": entry.finta,
-            "Prozentual": f"{entry.quote} %"
+            "Prozentual": f"{entry.quota} %"
         })
 
     df = pd.DataFrame(rows)
@@ -56,4 +56,4 @@ def generate_picture(vorlesung):
 
 
 if __name__ == "__main__":
-    generate_picture(Vorlesung.RSN)
+    generate_picture(Lecture.RSN)
