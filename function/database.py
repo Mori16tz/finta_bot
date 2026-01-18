@@ -30,7 +30,7 @@ class Database(Base):
     number: Mapped[int]
 
 
-engine = create_engine("sqlite:///data.db")
+engine = create_engine("mysql+pymysql://root:@localhost:3306/finta")
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
