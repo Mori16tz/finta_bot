@@ -30,7 +30,7 @@ class Database(Base):
     number: Mapped[int]
 
 
-engine = create_engine("mysql+pymysql://root:@localhost:3306/finta",pool_pre_ping=True,pool_recylce=3600)
+engine = create_engine("mysql+pymysql://root:@localhost:3306/finta",pool_pre_ping=True,pool_recycle=3600,pool_size=5, max_overflow=10)
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
