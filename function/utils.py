@@ -1,4 +1,4 @@
-from database import get_lecture, Lecture
+from database import get_lecture, Lecture, Semester
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -7,9 +7,9 @@ GRID_COLOR = "#4F545C"
 TEXT_COLOR = "#FFFFFF"
 
 
-def generate_picture(vorlesung):
+def generate_picture(vorlesung,semester):
     rows = []
-    for entry in get_lecture(vorlesung):
+    for entry in get_lecture(vorlesung,semester):
         rows.append({
             "Vorlesung": entry.number,
             "Datum": entry.date,
@@ -26,7 +26,7 @@ def generate_picture(vorlesung):
     fig.patch.set_facecolor(BG_COLOR)
     ax.axis('off')
 
-    title = vorlesung.value
+    title = f"{vorlesung.value} im {semester.value}"
     plt.title(title, fontsize=16, fontweight='bold', pad=20, color=TEXT_COLOR)
 
     table = ax.table(
@@ -56,4 +56,4 @@ def generate_picture(vorlesung):
 
 
 if __name__ == "__main__":
-    generate_picture(Lecture.RSN)
+    generate_picture(Lecture.RSN,Semester.WS25)
