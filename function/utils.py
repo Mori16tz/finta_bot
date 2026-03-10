@@ -7,9 +7,9 @@ GRID_COLOR = "#4F545C"
 TEXT_COLOR = "#FFFFFF"
 
 
-def generate_picture(vorlesung,semester):
+def generate_picture(vorlesung, semester):
     rows = []
-    for entry in get_lecture(vorlesung,semester):
+    for entry in get_lecture(vorlesung, semester):
         rows.append({
             "Vorlesung": entry.number,
             "Datum": entry.date,
@@ -17,7 +17,6 @@ def generate_picture(vorlesung,semester):
             "FINTA": entry.finta,
             "Prozentual": f"{entry.quota} %"
         })
-
     df = pd.DataFrame(rows)
     df.sort_values(["Datum", "Vorlesung"], inplace=True)
     df["Datum"] = pd.to_datetime(df["Datum"])
@@ -56,4 +55,4 @@ def generate_picture(vorlesung,semester):
 
 
 if __name__ == "__main__":
-    generate_picture(Lecture.RSN,Semester.WS25)
+    generate_picture(Lecture.RSN, Semester.WS25)
