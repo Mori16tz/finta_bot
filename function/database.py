@@ -18,7 +18,7 @@ class Lecture(StrEnum):
     Anatomie = "Anatomie"
     AnaLina = "Analysis und Lineare Algebra"
     DBS = "Datenbanksysteme"
-    BeTrS = "Betriebssysteme"
+    BTS = "Betriebssysteme"
     AlgoDat = "Algorithmen und Datenstrukturen"
     PK2 = "Programmierkurs 2"
     TI = "Theoretische Informatik"

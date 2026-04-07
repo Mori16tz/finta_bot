@@ -29,14 +29,14 @@ async def eintrag(interaction: discord.Interaction, optionen: Lecture, gesamt: s
 
 
 @bot.tree.command(name="nachtrag", description="Einen Eintrag nachtragen")
-@app_commands.describe(optionen="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", date="Datum", num="1. oder 2. Vorlesung der Woche", semester="Semester")
-async def nachtrag(interaction: discord.Interaction, date: str, optionen: Lecture, gesamt: str, finta: str, num: str, semester: Semester):
+@app_commands.describe(fach="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", date="Datum", num="1. oder 2. Vorlesung der Woche", semester="Semester")
+async def nachtrag(interaction: discord.Interaction, date: str, fach: Lecture, gesamt: str, finta: str, num: str, semester: Semester):
     date_ = convert(date)
-    if get_entry(optionen, date_) is not None:
+    if get_entry(fach, date_) is not None:
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
         return
-    add_entry(optionen, gesamt, finta, num, semester, date_)
-    await interaction.response.send_message(f"Der Eintrag\nFach: {optionen}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
+    add_entry(fach, gesamt, finta, num, semester, date_)
+    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
 
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
