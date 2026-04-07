@@ -23,6 +23,8 @@ class Lecture(StrEnum):
     PK2 = "Programmierkurs 2"
     TI = "Theoretische Informatik"
     SP = "Software Projekt"
+    SpoPsy = "Sportpsychologie"
+    SpoPhy = "Sportphysiologie"
 
 
 class Semester(StrEnum):

@@ -25,7 +25,7 @@ async def eintrag(interaction: discord.Interaction, optionen: Lecture, gesamt: s
         return
     semester = Semester.SS26
     add_entry(optionen, gesamt, finta, num, semester)
-    await interaction.response.send_message(f"Der Eintrag\nFach:{optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
+    await interaction.response.send_message(f"Der Eintrag\nFach:{optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100,2)}%.")
 
 
 @bot.tree.command(name="nachtrag", description="Einen Eintrag nachtragen")
@@ -36,7 +36,7 @@ async def nachtrag(interaction: discord.Interaction, date: str, fach: Lecture, g
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
         return
     add_entry(fach, gesamt, finta, num, semester, date_)
-    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.")
+    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100,2)}%.")
 
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
