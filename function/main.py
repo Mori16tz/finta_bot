@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord import app_commands
-from database import Lecture, add_entry, delete_entry, get_entry, get_lecture, Semester
+from database import Lecture, add_entry, delete_entry, get_entry, get_lecture, Semester, update_entry
 import datetime
 
 from utils import generate_picture
@@ -25,7 +25,7 @@ async def eintrag(interaction: discord.Interaction, optionen: Lecture, gesamt: s
         return
     semester = Semester.SS26
     add_entry(optionen, gesamt, finta, num, semester)
-    await interaction.response.send_message(f"Der Eintrag\nFach:{optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100,2)}%.")
+    await interaction.response.send_message(f"Der Eintrag\nFach:{optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%.")
 
 
 @bot.tree.command(name="nachtrag", description="Einen Eintrag nachtragen")
@@ -36,7 +36,7 @@ async def nachtrag(interaction: discord.Interaction, date: str, fach: Lecture, g
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
         return
     add_entry(fach, gesamt, finta, num, semester, date_)
-    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100,2)}%.")
+    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\n Die FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%.")
 
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
@@ -51,20 +51,31 @@ async def löschen(interaction: discord.Interaction, date: str, optionen: Lectur
 
 
 @bot.tree.command(name="anzeigen", description="Zeigt die Tabelle für ein bestimmtes Fach an")
-@app_commands.describe(fach="Fach",semester="Semester")
-async def anzeigen(interaction: discord.Interaction, fach: Lecture,semester: Semester):
-    generate_picture(fach,semester)
+@app_commands.describe(fach="Fach", semester="Semester")
+async def anzeigen(interaction: discord.Interaction, fach: Lecture, semester: Semester):
+    generate_picture(fach, semester)
     await interaction.response.send_message(file=discord.File("table.png"))
 
 
 @bot.tree.command(name="durchschnitt", description="Zeigt den Durchschnitt für ein bestimmtes Fach an")
-@app_commands.describe(fach="Fach",semester="Semester")
-async def durchschnitt(interaction: discord.Interaction, fach: Lecture,semester: Semester):
-    rows, avg = get_lecture(fach,semester), 0
+@app_commands.describe(fach="Fach", semester="Semester")
+async def durchschnitt(interaction: discord.Interaction, fach: Lecture, semester: Semester):
+    rows, avg = get_lecture(fach, semester), 0
     for entry in rows:
         avg = avg + entry.quota
     avg = round(avg/len(rows), 2)
     await interaction.response.send_message(f"Der Durchschnitt für {fach.value} ist {avg} %.")
+
+
+@bot.tree.command(name="edit", description="Editiert einen bereits angelegten Eintrag")
+@app_commands.describe(fach="Fach", date="Datum", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", num="1. oder 2. Vorlesung der Woche", semester="Semester")
+async def edit(interaction: discord.Interaction, fach: Lecture, date: str, gesamt: str, finta: str, num: str, semester: Semester):
+    date_ = convert(date)
+    if get_entry(fach, date_) is None:
+        await interaction.response.send_message("Dieser Eintrag existiert nicht")
+        return
+    update_entry(fach, date_, gesamt, finta, num, semester)
+    await interaction.response.send_message(f"Der Eintrag am {date} für {fach} wurde editiert.")
 
 
 def convert(date: str) -> datetime.date:

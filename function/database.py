@@ -79,3 +79,14 @@ def delete_entry(lecture: Lecture, date: datetime.date) -> None:
 def get_entry(lecture: Lecture, date: datetime.date) -> Database:
     return session.query(Database).filter(Database.lecture == lecture, Database.date == date).first()
 
+
+def update_entry(lecture: Lecture, date: datetime.date, ges: str, finta: str, num: str, semester: Semester) -> None:
+    entry = session.query(Database).filter(Database.lecture==lecture, Database.date == date).first()
+    if entry is not None:
+        entry.total = int(ges)
+        entry.finta = int(finta)
+        entry.number = int(num)
+        entry.quota = round((int(finta)/int(ges))*100, 2)
+        session.merge(entry)
+        session.commit()
+
