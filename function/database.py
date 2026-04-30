@@ -25,6 +25,7 @@ class Lecture(StrEnum):
     SP = "Software Projekt"
     SpoPsy = "Sportpsychologie"
     SpoPhy = "Sportphysiologie"
+    DataVis= "Data Visualization"
 
 
 class Semester(StrEnum):
