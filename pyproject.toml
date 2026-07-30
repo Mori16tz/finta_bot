@@ -4,7 +4,21 @@ version = "1.0.0"
 description = "A discord bot to track finta quota"
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
-dependencies = ["discord", "dotenv", "sqlalchemy", "pymysql", "jupyterlab", "ipykernel", "pandas", "matplotlib", "ipywidgets", "numpy", "seaborn", "IPython"]
+dependencies = [
+    "discord",
+    "dotenv",
+    "sqlalchemy",
+    "pymysql",
+    "jupyterlab",
+    "ipykernel",
+    "pandas",
+    "matplotlib",
+    "ipywidgets",
+    "numpy",
+    "seaborn",
+    "IPython",
+    "cryptography>=49.0.0",
+]
 
 [project.optional-dependencies]
 dev = ["ruff", "pre-commit"]

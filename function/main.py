@@ -1,15 +1,14 @@
-import discord
-import os
-from dotenv import load_dotenv
-from discord.ext import commands
-from discord import app_commands
-from database import Lecture, add_entry, delete_entry, get_entry, get_lecture, Semester, update_entry
 import datetime
+import os
 
+import discord
+from database import Lecture, Semester, add_entry, delete_entry, get_entry, get_lecture, update_entry
+from discord import app_commands
+from discord.ext import commands
+from dotenv import load_dotenv
 from utils import generate_picture
 
-bot = commands.Bot(command_prefix="",
-                   intents=discord.Intents.all(), help_command=None)
+bot = commands.Bot(command_prefix="", intents=discord.Intents.all(), help_command=None)
 
 
 @bot.event
@@ -18,25 +17,42 @@ async def on_ready() -> None:
 
 
 @bot.tree.command(name="eintrag", description="Einen neuen Eintrag hinzufügen")
-@app_commands.describe(optionen="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", num="1. oder 2. Vorlesung der Woche")
+@app_commands.describe(
+    optionen="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", num="1. oder 2. Vorlesung der Woche"
+)
 async def eintrag(interaction: discord.Interaction, optionen: Lecture, gesamt: str, finta: str, num: str):
     if get_entry(optionen, datetime.date.today()) is not None:
         await interaction.response.send_message("Der Eintrag für heute existiert bereits")
         return
     semester = Semester.SS26
     add_entry(optionen, gesamt, finta, num, semester)
-    await interaction.response.send_message(f"Der Eintrag\nFach: {optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\nDie FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%.")
+    generate_picture(optionen, semester)
+    await interaction.response.send_message(
+        f"Der Eintrag\nFach: {optionen}\nDatum: {datetime.date.today()}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\nDie FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%.",
+        file=discord.File("table.png"),
+    )
 
 
 @bot.tree.command(name="nachtrag", description="Einen Eintrag nachtragen")
-@app_commands.describe(fach="Fach", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", date="Datum", num="1. oder 2. Vorlesung der Woche", semester="Semester")
-async def nachtrag(interaction: discord.Interaction, date: str, fach: Lecture, gesamt: str, finta: str, num: str, semester: Semester):
+@app_commands.describe(
+    fach="Fach",
+    gesamt="Gesamtanzahl Teilnehmer",
+    finta="FINTA-Teilnehmer",
+    date="Datum",
+    num="1. oder 2. Vorlesung der Woche",
+    semester="Semester",
+)
+async def nachtrag(
+    interaction: discord.Interaction, date: str, fach: Lecture, gesamt: str, finta: str, num: str, semester: Semester
+):
     date_ = convert(date)
     if get_entry(fach, date_) is not None:
         await interaction.response.send_message("Dieser Eintrag existiert bereits")
         return
     add_entry(fach, gesamt, finta, num, semester, date_)
-    await interaction.response.send_message(f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\nDie FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%.")
+    await interaction.response.send_message(
+        f"Der Eintrag\nFach: {fach}\nDatum: {date}\nSemester: {semester.value}\nGesamt: {gesamt}\nFINTA: {finta}\nNummer: {num}\nwurde angelegt.\nDie FINTA-Quote beträgt {round((int(finta)/int(gesamt))*100, 2)}%."
+    )
 
 
 @bot.tree.command(name="löschen", description="Einen Eintrag löschen")
@@ -63,13 +79,22 @@ async def durchschnitt(interaction: discord.Interaction, fach: Lecture, semester
     rows, avg = get_lecture(fach, semester), 0
     for entry in rows:
         avg = avg + entry.quota
-    avg = round(avg/len(rows), 2)
+    avg = round(avg / len(rows), 2)
     await interaction.response.send_message(f"Der Durchschnitt für {fach.value} ist {avg} %.")
 
 
 @bot.tree.command(name="edit", description="Editiert einen bereits angelegten Eintrag")
-@app_commands.describe(fach="Fach", date="Datum", gesamt="Gesamtanzahl Teilnehmer", finta="FINTA-Teilnehmer", num="1. oder 2. Vorlesung der Woche", semester="Semester")
-async def edit(interaction: discord.Interaction, fach: Lecture, date: str, gesamt: str, finta: str, num: str, semester: Semester):
+@app_commands.describe(
+    fach="Fach",
+    date="Datum",
+    gesamt="Gesamtanzahl Teilnehmer",
+    finta="FINTA-Teilnehmer",
+    num="1. oder 2. Vorlesung der Woche",
+    semester="Semester",
+)
+async def edit(
+    interaction: discord.Interaction, fach: Lecture, date: str, gesamt: str, finta: str, num: str, semester: Semester
+):
     date_ = convert(date)
     if get_entry(fach, date_) is None:
         await interaction.response.send_message("Dieser Eintrag existiert nicht")
@@ -80,12 +105,14 @@ async def edit(interaction: discord.Interaction, fach: Lecture, date: str, gesam
 
 def convert(date: str) -> datetime.date:
     full = date.split(".")
-    return datetime.date(int(full[2])+2000, int(full[1]), int(full[0]))
+    return datetime.date(int(full[2]) + 2000, int(full[1]), int(full[0]))
 
 
 @bot.event
 async def on_message(message: discord.Message):
     pass
+
+
 load_dotenv()
 TOKEN = os.getenv("TOKEN", "no Token set")
 
