@@ -8,6 +8,12 @@ repos:
       - id: requirements-txt-fixer
       - id: pretty-format-json
         args: [--autofix, --no-sort-keys, --no-ensure-ascii]
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
   - repo: local
     hooks:
       - id: jupyter-nb-clear-output
